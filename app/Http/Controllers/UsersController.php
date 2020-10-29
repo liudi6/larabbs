@@ -19,6 +19,7 @@ class UsersController extends Controller
 
     public function update(UserRequest $request, User $user)
     {
+        dd($user->created_at);
         $user->update($request->all());
         return redirect()->route('users.show', $user->id)->with(
             'success',
