@@ -28,12 +28,14 @@ class UserRequest extends FormRequest
             'name' => 'required|between:3,25|regex:/^[A-Za-z0-9\-\_]+$/|unique:users,name,' . Auth::id(),
             'email' => 'required|email',
             'introduction' => 'max:80',
+            'avatar' => 'mimes:png,jpg,jpeg|dimensions:min_width=200,min_height=200'
         ];
     }
     public function messages()
     {
         return [
-            'name.between' => '用户名在3-25'
+            'name.between' => '用户名在3-25',
+            'avatar.dimensions' => '图片长宽要大于200px'
         ];
     }
 }
