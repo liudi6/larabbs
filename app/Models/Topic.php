@@ -4,6 +4,9 @@ namespace App\Models;
 
 class Topic extends Model
 {
+
+    public $timestamps = false;
+
     protected $fillable = [
         'title', 'body',
         'user_id', 'category_id',
@@ -12,5 +15,12 @@ class Topic extends Model
         'excerpt', 'slug'
     ];
 
-    public $timestamps = false;
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
