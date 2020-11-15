@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TopicRequest;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class TopicsController extends Controller
@@ -17,17 +18,19 @@ class TopicsController extends Controller
         $this->middleware('auth', ['except' => ['index', 'show']]);
     }
 
-    public function index(Request $request, Topic $topic)
+    public function index(Request $request, Topic $topic, User $user)
     {
         $topics = $topic->withOrder($request->order)
             ->with('user', 'category')
             ->paginate(30);
-        return view('topics.index', compact('topics'));
+
+        $active_users = $user->getActiveUsers();
+        return view('topics.index', compact('topics', 'active_users'));
     }
 
     public function show(Request $request, Topic $topic)
     {
-        if(! empty($this->slug) && $topic->slug != $request->slug) {
+        if (!empty($this->slug) && $topic->slug != $request->slug) {
             return redirect($topic->link(), 301);
         }
         return view('topics.show', compact('topic'));
@@ -74,9 +77,9 @@ class TopicsController extends Controller
     public function uploadImage(Request $request, ImageUploadHandler $uploader)
     {
         $data = [
-            'success'=>'false',
-            'mesg'=>'fail',
-            'file_path'=>''
+            'success' => 'false',
+            'mesg' => 'fail',
+            'file_path' => ''
         ];
         if ($file = $request->upload_file) {
             $result = $uploader->save($file, 'topics', \Auth::id(), 1024);
